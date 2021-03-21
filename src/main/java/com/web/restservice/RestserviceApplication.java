@@ -1,13 +1,13 @@
-package com.example.lab1;
+package com.web.restservice;
 
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 
 @SpringBootApplication
-public class Lab1Application {
+public class RestserviceApplication {
 
 	public static void main(String[] args) {
-		SpringApplication.run(Lab1Application.class, args);
+		SpringApplication.run(RestserviceApplication.class, args);
 	}
 
 }

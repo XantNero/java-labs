@@ -1,4 +1,4 @@
-package com.example.lab1;
+package com.web.restservice;
 
 
 public class Calendar {
@@ -15,7 +15,7 @@ public class Calendar {
 		"Saturday",
 		"Sunday"
 	};
-	private final int startYear = 1601;
+	private final int startYear = 1201;
 	public Calendar(int year, int day) {
 		this.year = year;
 		this.day = day;
@@ -35,5 +35,7 @@ public class Calendar {
 	public String getDayOfWeek() {
 		return dayOfWeek;
 	}
-
+	static public boolean isLeapYear(int year) {
+		return ((year % 4 == 0 && year % 100 != 0) || year % 400 == 0);
+	}
 }
