@@ -16,6 +16,11 @@ public class Calendar {
 		"Sunday"
 	};
 	private final int startYear = 1201;
+	public Calendar(int year, int day, String dayOfWeek) {
+		this.year = year;
+		this.day = day;
+		this.dayOfWeek = dayOfWeek;
+	}
 	public Calendar(int year, int day) {
 		this.year = year;
 		this.day = day;
@@ -23,6 +28,7 @@ public class Calendar {
 		yearDif += yearDif / 4 - yearDif / 100 + yearDif / 400;
 		this.dayOfWeek = days[(yearDif + day - 1) % 7];
 	}
+	
 
 	public int getYear() {
 		return year;

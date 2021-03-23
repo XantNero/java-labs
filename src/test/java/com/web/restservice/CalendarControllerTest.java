@@ -15,7 +15,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 
 @SpringBootTest
-public class CalendarControllerTest extends AbstractTest{
+public class CalendarControllerTest extends AbstractTest {
    
     @Override
     @Before
@@ -23,7 +23,7 @@ public class CalendarControllerTest extends AbstractTest{
        super.setUp();
     }
    @Test
-   public void testStandartParams() throws Exception{
+   public void testStandartParams() throws Exception {
       String uri = "/calendar";
       MvcResult mvcResult = mvc.perform(MockMvcRequestBuilders.get(uri))
       .andReturn();
@@ -32,7 +32,7 @@ public class CalendarControllerTest extends AbstractTest{
       assertEquals(200, status);
    }
    @Test
-   public void testNegativeYear() throws Exception{
+   public void testNegativeYear() throws Exception {
       String uri = "/calendar";
       MvcResult mvcResult = mvc.perform(MockMvcRequestBuilders.get(uri)
          .param("year", "-100").param("day", "1")).andReturn();
@@ -40,12 +40,22 @@ public class CalendarControllerTest extends AbstractTest{
       int status = mvcResult.getResponse().getStatus();
       assertEquals(400, status);
    }
-   public void testNegativeDay() throws Exception{
+   @Test
+   public void testNegativeDay() throws Exception {
     String uri = "/calendar";
-    MvcResult mvcResult = mvc.perform(MockMvcRequestBuilders.get(uri)
+      MvcResult mvcResult = mvc.perform(MockMvcRequestBuilders.get(uri)
        .param("year", "2000").param("day", "-10")).andReturn();
     
-    int status = mvcResult.getResponse().getStatus();
-    assertEquals(400, status);
-     }
+      int status = mvcResult.getResponse().getStatus();
+      assertEquals(400, status);
+   }
+   @Test
+   public void testBigYear() throws Exception {
+    String uri = "/calendar";
+      MvcResult mvcResult = mvc.perform(MockMvcRequestBuilders.get(uri)
+       .param("year", "2000000000000000000000000000000000").param("day", "2")).andReturn();
+    
+      int status = mvcResult.getResponse().getStatus();
+      assertEquals(400, status);
+   }
 }

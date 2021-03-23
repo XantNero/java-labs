@@ -11,8 +11,8 @@ import org.springframework.test.web.servlet.setup.MockMvcBuilders;
 import org.springframework.web.context.WebApplicationContext;
 
 @RunWith(SpringJUnit4ClassRunner.class)
-@SpringBootTest(classes = RestserviceApplication.class)
-@WebAppConfiguration
+@SpringBootTest
+//@WebAppConfiguration
 public abstract class AbstractTest {
    protected MockMvc mvc;
    @Autowired
