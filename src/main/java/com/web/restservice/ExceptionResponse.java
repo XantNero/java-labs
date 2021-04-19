@@ -12,7 +12,7 @@ public class ExceptionResponse {
       this.timestamp = timestamp;
       this.message = message;
       this.detailes = details;
-      this.httpCodeMessage=httpCodeMessage;
+      this.httpCodeMessage = httpCodeMessage;
     }
   
     public String getHttpCodeMessage() {
