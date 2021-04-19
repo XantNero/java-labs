@@ -1,15 +1,15 @@
 package com.web.restservice;
 
-import java.util.HashMap;
+import java.util.concurrent.ConcurrentHashMap;
 import org.springframework.stereotype.Component;
 
 @Component
 public class Cache {
 
-    private HashMap<String, String> cache;
+    private ConcurrentHashMap<String, String> cache;
 
     public Cache() {
-        cache = new HashMap<String, String>();
+        cache = new ConcurrentHashMap<String, String>();
     }
     public void insert(String key, String value) {
         cache.put(key, value);
