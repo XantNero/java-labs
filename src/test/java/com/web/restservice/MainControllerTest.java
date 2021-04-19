@@ -15,13 +15,13 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 
 @SpringBootTest
-public class CalendarControllerTest extends AbstractTest {
+public class MainControllerTest extends AbstractTest {
    
-    @Override
-    @Before
-    public void setUp() {
-       super.setUp();
-    }
+   @Override
+   @Before
+   public void setUp() {
+      super.setUp();
+   }
    @Test
    public void testStandartParams() throws Exception {
       String uri = "/calendar";
@@ -57,5 +57,14 @@ public class CalendarControllerTest extends AbstractTest {
     
       int status = mvcResult.getResponse().getStatus();
       assertEquals(400, status);
+   }
+   @Test
+   public void testCounter() throws Exception {
+      String uri = "/counter";
+      MvcResult mvcResult = mvc.perform(MockMvcRequestBuilders.get(uri))
+      .andReturn();
+      
+      int status = mvcResult.getResponse().getStatus();
+      assertEquals(200, status);
    }
 }
