@@ -3,13 +3,17 @@ package com.web.restservice;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import org.springframework.web.client.HttpClientErrorException;
-import org.springframework.web.client.HttpServerErrorException;
 import org.springframework.http.HttpStatus;
 
 import org.springframework.stereotype.Service;
 import org.springframework.beans.factory.annotation.Autowired;
 
+import java.util.stream.Stream;
+import java.util.stream.Collectors;
+import java.util.List;
+import java.util.ArrayList;
+
+import org.springframework.web.server.ResponseStatusException;
 
 @Service
 class CalendarService {
@@ -20,12 +24,12 @@ class CalendarService {
     protected Logger logger = LoggerFactory.getLogger(getClass());
 
     public Calendar getCalendar(int year, int day)
-        throws HttpClientErrorException, HttpServerErrorException
+        throws ResponseStatusException
     {
 		if (year < 1520) {
 			String errorMessage = "Invalid year " + String.valueOf(year);
 			logger.error(errorMessage);
-			throw new HttpClientErrorException(
+			throw new ResponseStatusException(
 				HttpStatus.BAD_REQUEST,errorMessage);
 		}
 			
@@ -33,7 +37,7 @@ class CalendarService {
 			 	(day == 366 && !Calendar.isLeapYear(year))) {
 			String errorMessage = "Invalid day " + String.valueOf(day);
 			logger.error(errorMessage);
-			throw new HttpClientErrorException(
+			throw new ResponseStatusException(
 				HttpStatus.BAD_REQUEST, errorMessage);
 		}
 		
@@ -53,7 +57,7 @@ class CalendarService {
 				 "Computation error: year=" + String.valueOf(year) +
                                     " day=" + String.valueOf(day);
 			logger.error(errorMessage);
-			throw new HttpServerErrorException(HttpStatus.INTERNAL_SERVER_ERROR,
+			throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR,
                                                errorMessage);
 		}
 		
@@ -66,4 +70,23 @@ class CalendarService {
 		
 		return calendarObj;
     }
+
+	public Calendar getCalendar(DayOfYear dayOfYear) {	
+		return getCalendar(dayOfYear.getYear(), dayOfYear.getDay());
+	}
+
+	public List<Calendar> getCalendars(List<DayOfYear> days) {
+		logger.info("Proccessing sequence of parameters");
+		return days.stream()
+			.parallel()
+			.filter(dayOfYear -> {
+				return 	dayOfYear.getYear() >= 1520 &&
+						dayOfYear.getDay() > 0 &&
+						dayOfYear.getDay() <= 365 &&
+						(dayOfYear.getDay() != 366 || Calendar.isLeapYear(dayOfYear.getYear()));
+			})
+			.parallel()	
+			.map(dayOfYear -> getCalendar(dayOfYear))
+			.collect(Collectors.toCollection(ArrayList::new));
+	}
 }

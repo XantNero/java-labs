@@ -2,6 +2,8 @@ package com.web.restservice;
 
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.http.HttpStatus;
 
@@ -13,6 +15,10 @@ import java.lang.Thread;
 
 import org.springframework.http.ResponseEntity;
 
+import java.util.List;
+import java.util.Map;
+import java.util.stream.Stream;
+import java.util.stream.Collectors;
 
 @RestController
 public class MainController {
@@ -30,8 +36,22 @@ public class MainController {
 	}
 
 	@GetMapping("/counter")
-	public ResponseEntity<Object>  counter() {
-
+	public ResponseEntity<Object> getCounter() {
 		return new ResponseEntity<>(counterService.getCounter(), HttpStatus.OK);
 	}
+
+	@PostMapping(path = "/calendars", consumes = "application/json", produces = "application/json")
+	public ResponseEntity<Object> postCalendars(@RequestBody List<DayOfYear> days) {
+		List<Calendar> calendars = calendarService.getCalendars(days);
+		String popularDay = calendars
+			.stream()
+			.collect(Collectors.groupingBy(calendar -> calendar.getDayOfWeek(), Collectors.counting()))
+			.entrySet().stream().max(Map.Entry.comparingByValue())
+			.map(entry -> entry.getKey()).orElse("Not defined");
+		int inputCount = days.size();
+		int nonValidCount = inputCount - calendars.size();
+		
+		counterService.incrementCounter();
+		return new ResponseEntity<>(new CalendarsPostResponse(calendars, popularDay, inputCount, nonValidCount), HttpStatus.OK);
+	}		
 }
