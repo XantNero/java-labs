@@ -11,6 +11,10 @@ public class DayOfYear {
 		this.day = day;
 	}
 
+	public DayOfYear() {
+		this(1970, 1);
+	}
+
 	public int getYear() {
 		return year;
 	}

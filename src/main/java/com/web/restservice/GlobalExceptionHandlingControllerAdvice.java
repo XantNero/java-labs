@@ -11,7 +11,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.context.request.WebRequest;
 
 import org.springframework.http.converter.HttpMessageNotReadableException;
-
+import com.fasterxml.jackson.databind.exc.InvalidFormatException;
 import org.springframework.web.server.ResponseStatusException;
 
 import java.util.Date;
@@ -36,10 +36,10 @@ public class GlobalExceptionHandlingControllerAdvice{
 		return  new ResponseEntity<ExceptionResponse>(exceptionResponse, HttpStatus.BAD_REQUEST);
 	}
 
-	@ExceptionHandler(HttpMessageNotReadableException.class)
+	@ExceptionHandler(InvalidFormatException.class)
 	@ResponseBody
-	public ResponseEntity<ExceptionResponse> handleHttpMessageNotReadableException(HttpMessageNotReadableException ex, WebRequest request) {
-		ExceptionResponse exceptionResponse = new ExceptionResponse(new Date(), ex.getMessage(),
+	public ResponseEntity<ExceptionResponse> handleHttpMessageNotReadableException(InvalidFormatException ex, WebRequest request) {
+		ExceptionResponse exceptionResponse = new ExceptionResponse(new Date(), ex.getMessage().substring(0, ex.getMessage().indexOf(':')),
         request.getDescription(false),HttpStatus.BAD_REQUEST.getReasonPhrase());
 		return  new ResponseEntity<ExceptionResponse>(exceptionResponse, HttpStatus.BAD_REQUEST);
 	}
