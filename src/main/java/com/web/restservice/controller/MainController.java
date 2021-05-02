@@ -27,12 +27,18 @@ public class MainController {
 	private CounterService counterService;
 	@Autowired
 	private CalendarService calendarService;
+	@Autowired
+	private DatabaseService databaseService;
 
 	@GetMapping("/calendar")
 	public ResponseEntity<Object> getCalendar(@RequestParam(value = "year", defaultValue = "1970") int year, 
 	@RequestParam(value = "day", defaultValue = "1") int day) {
 		counterService.incrementCounter();
-		return new ResponseEntity<>(calendarService.getCalendar(year, day), HttpStatus.OK);
+		Calendar calendar = calendarService.getCalendar(year, day);
+		if (!databaseService.isStored(year, day)) {
+			databaseService.insertCalendar(calendar);
+		}
+		return new ResponseEntity<>(new CalendarResponse(calendar), HttpStatus.OK);
 	}
 
 	@GetMapping("/counter")
@@ -43,6 +49,11 @@ public class MainController {
 	@PostMapping(path = "/calendars", consumes = "application/json", produces = "application/json")
 	public ResponseEntity<Object> postCalendars(@RequestBody List<DayOfYear> days) {
 		List<Calendar> calendars = calendarService.getCalendars(days);
+		calendars.stream().forEach(calendar -> {
+			if (!databaseService.isStored(calendar.getYear(), calendar.getDay())) {
+				databaseService.insertCalendar(calendar);
+			}
+		});
 		String popularDay = calendars
 			.stream()
 			.collect(Collectors.groupingBy(calendar -> calendar.getDayOfWeek(), Collectors.counting()))

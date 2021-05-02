@@ -24,22 +24,8 @@ class CalendarService {
     protected Logger logger = LoggerFactory.getLogger(getClass());
 
     public Calendar getCalendar(int year, int day)
-        throws ResponseStatusException
-    {
-		if (year < 1520) {
-			String errorMessage = "Invalid year " + String.valueOf(year);
-			logger.error(errorMessage);
-			throw new ResponseStatusException(
-				HttpStatus.BAD_REQUEST,errorMessage);
-		}
-			
-		if (day <= 0 || day > 366 ||
-			 	(day == 366 && !Calendar.isLeapYear(year))) {
-			String errorMessage = "Invalid day " + String.valueOf(day);
-			logger.error(errorMessage);
-			throw new ResponseStatusException(
-				HttpStatus.BAD_REQUEST, errorMessage);
-		}
+        	throws ResponseStatusException {
+		validateParameters(year, day);
 		
 		String s = String.valueOf(year) + " " + String.valueOf(day);
 		if (cache.isStored(s)) {
@@ -63,10 +49,8 @@ class CalendarService {
 		
 		cache.insert(s, calendarObj.getDayOfWeek());
 
-		logger.info("Successfully compute year "
-                    + String.valueOf(year) 
-                    + " and day "
-                    + String.valueOf(day));
+		logger.info("Successfully compute year " + String.valueOf(year) 
+                    + " and day " + String.valueOf(day));
 		
 		return calendarObj;
     }
@@ -88,5 +72,23 @@ class CalendarService {
 			.parallel()	
 			.map(dayOfYear -> getCalendar(dayOfYear))
 			.collect(Collectors.toCollection(ArrayList::new));
+	}
+
+	private boolean validateParameters(int year, int day) throws ResponseStatusException {
+		if (year < 1520) {
+			String errorMessage = "Invalid year " + String.valueOf(year);
+			logger.error(errorMessage);
+			throw new ResponseStatusException(
+				HttpStatus.BAD_REQUEST,errorMessage);
+		}
+			
+		if (day <= 0 || day > 366 ||
+			 	(day == 366 && !Calendar.isLeapYear(year))) {
+			String errorMessage = "Invalid day " + String.valueOf(day);
+			logger.error(errorMessage);
+			throw new ResponseStatusException(
+				HttpStatus.BAD_REQUEST, errorMessage);
+		}
+		return true;
 	}
 }
